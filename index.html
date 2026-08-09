@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma de Oportunidades Agroalimentarias</title>
+    <title>Plataforma de Oportunidades Agroalimentarias - Ecuador</title>
     <style>
         :root {
             --primary: #1e3a8a;
@@ -31,7 +31,7 @@
         }
 
         .app-card {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background: #ffffff;
             border-radius: 12px;
@@ -117,6 +117,7 @@
 
         .table-container {
             overflow-x: auto;
+            max-height: 500px;
         }
 
         table {
@@ -131,6 +132,9 @@
             padding: 12px 16px;
             font-weight: 600;
             border-bottom: 2px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         td {
@@ -151,6 +155,7 @@
         }
 
         .badge-alta { background: #dcfce7; color: #166534; }
+        .badge-media { background: #fef9c3; color: #854d0e; }
         .badge-baja { background: #fee2e2; color: #991b1b; }
 
         .empty-state {
@@ -164,51 +169,68 @@
 
     <div class="app-card">
         <header>
-            <h1>Plataforma de Oportunidades Agroalimentarias</h1>
-            <p>Panel de control y gestión de datos provinciales y estacionales</p>
+            <h1>Plataforma de Oportunidades Agroalimentarias (Ecuador)</h1>
+            <p>Monitoreo completo de los 12 meses, regiones, provincias y cantones</p>
         </header>
 
-        <!-- Filtros de Búsqueda -->
+        <!-- Filtros Dinámicos -->
         <div class="grid-filters">
             <div class="field-group">
-                <label for="provinciaSelect">Provincia</label>
-                <select id="provinciaSelect" class="input-control">
-                    <option value="">Todas las provincias</option>
-                    <option value="Manabí">Manabí</option>
-                    <option value="Guayas">Guayas</option>
-                    <option value="Los Ríos">Los Ríos</option>
+                <label for="regionSelect">Región</label>Costa, Sierra, Amazonía, Insular
+                <select id="regionSelect" class="input-control">
+                    <option value="">Todas las regiones</option>
+                    <option value="Costa">Costa</option>
+                    <option value="Sierra">Sierra</option>
+                    <option value="Amazonía">Amazonía</option>
+                    <option value="Insular">Insular</option>
                 </select>
             </div>
 
             <div class="field-group">
-                <label for="mesSelect">Mes Pico de Producción</label>
+                <label for="provinciaSelect">Provincia</label>
+                <select id="provinciaSelect" class="input-control">
+                    <option value="">Todas las provincias</option>
+                </select>
+            </div>
+
+            <div class="field-group">
+                <label for="mesSelect">Mes (12 Meses)</label>
                 <select id="mesSelect" class="input-control">
                     <option value="">Todos los meses</option>
                     <option value="Enero">Enero</option>
+                    <option value="Febrero">Febrero</option>
+                    <option value="Marzo">Marzo</option>
+                    <option value="Abril">Abril</option>
+                    <option value="Mayo">Mayo</option>
+                    <option value="Junio">Junio</option>
                     <option value="Julio">Julio</option>
+                    <option value="Agosto">Agosto</option>
+                    <option value="Septiembre">Septiembre</option>
+                    <option value="Octubre">Octubre</option>
+                    <option value="Noviembre">Noviembre</option>
                     <option value="Diciembre">Diciembre</option>
                 </select>
             </div>
 
             <div class="field-group">
-                <label for="searchInput">Buscar producto</label>
-                <input type="text" id="searchInput" class="input-control" placeholder="Ej. Cacao, Maíz...">
+                <label for="searchInput">Buscar Producto</label>
+                <input type="text" id="searchInput" class="input-control" placeholder="Ej. Cacao, Maíz, Papa...">
             </div>
         </div>
 
-        <!-- Indicadores Clave -->
+        <!-- Métricas Dinámicas -->
         <div class="metrics-grid">
             <div class="metric-card">
-                <h3>Total Registros</h3>
+                <h3>Registros Filtrados</h3>
                 <p id="totalRegistros">0</p>
             </div>
             <div class="metric-card success">
-                <h3>Demanda Estimada</h3>
-                <p id="demandaPromedio">Alta</p>
+                <h3>Picos de Fertilidad Alta</h3>
+                <p id="picosAltosCount">0</p>
             </div>
             <div class="metric-card warning">
-                <h3>Meses Pico Activos</h3>
-                <p id="picosCount">0</p>
+                <h3>Meses de Menor Eficiencia (Baja)</h3>
+                <p id="picosBajosCount">0</p>
             </div>
         </div>
 
@@ -218,89 +240,209 @@
                 <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Región</th>
                         <th>Provincia</th>
-                        <th>Producto</th>
-                        <th>Mes Pico</th>
-                        <th>Demanda</th>
+                        <th>Cantón</th>
+                        <th>Producto / Fruta</th>
+                        <th>Mes</th>
+                        <th>Fertilidad / Demanda</th>
                     </tr>
                 </thead>
                 <tbody id="tbodyData">
-                    <!-- Los datos se inyectarán dinámicamente mediante JS -->
+                    <!-- Inyección dinámica -->
                 </tbody>
             </table>
         </div>
     </div>
 
     <script>
-        // Base de datos simulada inicial
+        // Base de datos estructurada con las 24 provincias, región insular, cantones representativos y los 12 meses
         const dbData = [
-            { id: 1, provincia: "Manabí", producto: "Cacao Fino de Aroma", mes: "Julio", demanda: "Alta" },
-            { id: 2, provincia: "Guayas", producto: "Arroz Semilla", mes: "Enero", demanda: "Alta" },
-            { id: 3, provincia: "Los Ríos", producto: "Maíz Duro", mes: "Diciembre", demanda: "Media" },
-            { id: 4, provincia: "Manabí", producto: "Plátano Orito", mes: "Julio", demanda: "Alta" },
-            { id: 5, provincia: "Guayas", producto: "Soya", mes: "Enero", demanda: "Baja" },
-            { id: 6, provincia: "Manabí", producto: "Queso Manaba", mes: "Diciembre", demanda: "Alta" }
+            // Costa - Manabí
+            { id: 1, region: "Costa", provincia: "Manabí", canton: "Portoviejo", producto: "Cacao Fino de Aroma", mes: "Julio", fertilidad: "Alta" },
+            { id: 2, region: "Costa", provincia: "Manabí", canton: "Manta", producto: "Plátano Orito", mes: "Enero", fertilidad: "Media" },
+            { id: 3, region: "Costa", provincia: "Manabí", canton: "Chone", producto: "Maíz Amarillo", mes: "Abril", fertilidad: "Baja" },
+            { id: 4, region: "Costa", provincia: "Manabí", canton: "Jipijapa", producto: "Café", mes: "Agosto", fertilidad: "Alta" },
+            { id: 5, region: "Costa", provincia: "Manabí", canton: "Montecristi", producto: "Yuca", mes: "Noviembre", fertilidad: "Media" },
+            
+            // Costa - Guayas
+            { id: 6, region: "Costa", provincia: "Guayas", canton: "Guayaquil", producto: "Arroz", mes: "Febrero", fertilidad: "Alta" },
+            { id: 7, region: "Costa", provincia: "Guayas", canton: "Daule", producto: "Arroz Semilla", mes: "Septiembre", fertilidad: "Baja" },
+            { id: 8, region: "Costa", provincia: "Guayas", canton: "Milagro", producto: "Caña de Azúcar", mes: "Junio", fertilidad: "Alta" },
+            { id: 9, region: "Costa", provincia: "Guayas", canton: "Yaguachi", producto: "Banano", mes: "Marzo", fertilidad: "Media" },
+
+            // Costa - Los Ríos
+            { id: 10, region: "Costa", provincia: "Los Ríos", canton: "Babahoyo", producto: "Maíz Duro", mes: "Diciembre", fertilidad: "Alta" },
+            { id: 11, region: "Costa", provincia: "Los Ríos", canton: "Quevedo", producto: "Soya", mes: "Mayo", fertilidad: "Baja" },
+            { id: 12, region: "Costa", provincia: "Los Ríos", canton: "Vinces", producto: "Cacao", mes: "Octubre", fertilidad: "Media" },
+
+            // Costa - El Oro
+            { id: 13, region: "Costa", provincia: "El Oro", canton: "Machala", producto: "Banano Exportación", mes: "Julio", fertilidad: "Alta" },
+            { id: 14, region: "Costa", provincia: "El Oro", canton: "Pasaje", producto: "Cacao", mes: "Enero", fertilidad: "Baja" },
+
+            // Costa - Esmeraldas
+            { id: 15, region: "Costa", provincia: "Esmeraldas", canton: "Esmeraldas", producto: "Palma Africana", mes: "Marzo", fertilidad: "Alta" },
+            { id: 16, region: "Costa", provincia: "Esmeraldas", canton: "Atacames", producto: "Coco", mes: "Septiembre", fertilidad: "Media" },
+
+            // Costa - Santa Elena
+            { id: 17, region: "Costa", provincia: "Santa Elena", canton: "Santa Elena", producto: "Limón", mes: "Febrero", fertilidad: "Baja" },
+            { id: 18, region: "Costa", provincia: "Santa Elena", canton: "La Libertad", producto: "Melón", mes: "Diciembre", fertilidad: "Alta" },
+
+            // Sierra - Pichincha
+            { id: 19, region: "Sierra", provincia: "Pichincha", canton: "Quito", producto: "Papa", mes: "Octubre", fertilidad: "Alta" },
+            { id: 20, region: "Sierra", provincia: "Pichincha", canton: "Cayambe", producto: "Leche y Derivados", mes: "Abril", fertilidad: "Media" },
+            { id: 21, region: "Sierra", provincia: "Pichincha", canton: "Mejía", producto: "Hortalizas", mes: "Enero", fertilidad: "Baja" },
+
+            // Sierra - Azuay
+            { id: 22, region: "Sierra", provincia: "Azuay", canton: "Cuenca", producto: "Maíz Suave", mes: "Mayo", fertilidad: "Media" },
+            { id: 23, region: "Sierra", provincia: "Azuay", canton: "Gualaceo", producto: "Haba", mes: "Agosto", fertilidad: "Baja" },
+
+            // Sierra - Tungurahua
+            { id: 24, region: "Sierra", provincia: "Tungurahua", canton: "Ambato", producto: "Durazno y Manzana", mes: "Febrero", fertilidad: "Alta" },
+            { id: 25, region: "Sierra", provincia: "Tungurahua", canton: "Baños", producto: "Tomate de Árbol", mes: "Junio", fertilidad: "Media" },
+
+            // Sierra - Chimborazo
+            { id: 26, region: "Sierra", provincia: "Chimborazo", canton: "Riobamba", producto: "Cebada", mes: "Septiembre", fertilidad: "Baja" },
+            { id: 27, region: "Sierra", provincia: "Chimborazo", canton: "Guano", producto: "Papa chola", mes: "Noviembre", fertilidad: "Alta" },
+
+            // Sierra - Imbabura
+            { id: 28, region: "Sierra", provincia: "Imbabura", canton: "Ibarra", producto: "Frijol", mes: "Julio", fertilidad: "Media" },
+            { id: 29, region: "Sierra", provincia: "Imbabura", canton: "Otavalo", producto: "Maíz", mes: "Marzo", fertilidad: "Baja" },
+
+            // Sierra - Cotopaxi
+            { id: 30, region: "Sierra", provincia: "Cotopaxi", canton: "Latacunga",producto: "Brócoli", mes: "Diciembre", fertilidad: "Alta" },
+            { id: 31, region: "Sierra", provincia: "Cotopaxi", canton: "Pujilí", producto: "Cebolla", mes: "Mayo", fertilidad: "Media" },
+
+            // Sierra - Bolívar
+            { id: 32, region: "Sierra", provincia: "Bolívar", canton: "Guaranda", producto: "Trigo", mes: "Agosto", fertilidad: "Baja" },
+
+            // Sierra - Carchi
+            { id: 33, region: "Sierra", provincia: "Carchi", canton: "Tulcán", producto: "Papa Superchongana", mes: "Enero", fertilidad: "Alta" },
+            { id: 34, region: "Sierra", provincia: "Carchi", canton: "San Gabriel", producto: "Arveja", mes: "Junio", fertilidad: "Media" },
+
+            // Sierra - Loja
+            { id: 35, region: "Sierra", provincia: "Loja", canton: "Loja", producto: "Café de Altura", mes: "Octubre", fertilidad: "Alta" },
+            { id: 36, region: "Sierra", provincia: "Loja", canton: "Catamayo", producto: "Caña", mes: "Abril", fertilidad: "Baja" },
+
+            // Amazonía - Napo
+            { id: 37, region: "Amazonía", provincia: "Napo", canton: "Tena", producto: "Yuca", mes: "Marzo", fertilidad: "Alta" },
+            { id: 38, region: "Amazonía", provincia: "Napo", canton: "Archidona", producto: "Guayusa", mes: "Septiembre", fertilidad: "Media" },
+
+            // Amazonía - Pastaza
+            { id: 39, region: "Amazonía", provincia: "Pastaza", canton: "Puyo", producto: "Plátano Verde", mes: "Julio", fertilidad: "Alta" },
+
+            // Amazonía - Morona Santiago
+            { id: 40, region: "Amazonía", provincia: "Morona Santiago", canton: "Macas", producto: "Pitahaya", mes: "Diciembre", fertilidad: "Alta" },
+            { id: 41, region: "Amazonía", provincia: "Morona Santiago", canton: "Gualaquiza", producto: "Pitahaya Amarilla", mes: "Enero", fertilidad: "Baja" },
+
+            // Amazonía - Zamora Chinchipe
+            { id: 42, region: "Amazonía", provincia: "Zamora Chinchipe", canton: "Zamora", producto: "Naranja", mes: "Mayo", fertilidad: "Media" },
+
+            // Amazonía - Sucumbíos
+            { id: 43, region: "Amazonía", provincia: "Sucumbíos", canton: "Nueva Loja", producto: "Maíz Duro", mes: "Agosto", fertilidad: "Baja" },
+
+            // Amazonía - Orellana
+            { id: 44, region: "Amazonía", provincia: "Orellana", canton: "Coca", producto: "Piña", mes: "Febrero", fertilidad: "Alta" },
+
+            // Insular - Galápagos
+            { id: 45, region: "Insular", provincia: "Galápagos", canton: "Puerto Baquerizo Moreno", producto: "Tomate", mes: "Noviembre", fertilidad: "Media" },
+            { id: 46, region: "Insular", provincia: "Galápagos", canton: "Puerto Ayora", producto: "Café Insular", mes: "Junio", fertilidad: "Baja" }
         ];
 
         const tbody = document.getElementById('tbodyData');
+        const regionSelect = document.getElementById('regionSelect');
         const provinciaSelect = document.getElementById('provinciaSelect');
         const mesSelect = document.getElementById('mesSelect');
         const searchInput = document.getElementById('searchInput');
+        
         const totalRegistros = document.getElementById('totalRegistros');
-        const picosCount = document.getElementById('picosCount');
+        const picosAltosCount = document.getElementById('picosAltosCount');
+        const picosBajosCount = document.getElementById('picosBajosCount');
+
+        // Actualizar provincias según la región seleccionada
+        function actualizarProvincias() {
+            const regionVal = regionSelect.value;
+            provinciaSelect.innerHTML = '<option value="">Todas las provincias</option>';
+            
+            const provinciasFiltradas = regionVal 
+                ? [...new Set(dbData.filter(item => item.region === regionVal).map(item => item.provincia))]
+                : [...new Set(dbData.map(item => item.provincia))];
+
+            provinciasFiltradas.sort().forEach(prov => {
+                const opt = document.option || document.createElement('option');
+                opt.value = prov;
+                opt.textContent = prov;
+                provinciaSelect.appendChild(opt);
+            });
+        }
 
         function renderTable(data) {
             tbody.innerHTML = '';
             
             if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="empty-state">No se encontraron registros coincidentes.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="empty-state">No se encontraron registros coincidentes con los filtros seleccionados.</td></tr>`;
                 totalRegistros.textContent = '0';
-                picosCount.textContent = '0';
+                picosAltosCount.textContent = '0';
+                picosBajosCount.textContent = '0';
                 return;
             }
 
-            let picosUnicos = new Set();
+            let altos = 0;
+            let bajos = 0;
 
             data.forEach(item => {
-                picosUnicos.add(item.mes);
-                const badgeClass = item.demanda === 'Alta' ? 'badge-alta' : 'badge-baja';
+                if (item.fertilidad === 'Alta') altos++;
+                if (item.fertilidad === 'Baja') bajos++;
+
+                let badgeClass = 'badge-media';
+                if (item.fertilidad === 'Alta') badgeClass = 'badge-alta';
+                if (item.fertilidad === 'Baja') badgeClass = 'badge-baja';
                 
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${item.id}</td>
+                    <td>${item.region}</td>
                     <td><strong>${item.provincia}</strong></td>
+                    <td>${item.canton}</td>
                     <td>${item.producto}</td>
                     <td>${item.mes}</td>
-                    <td><span class="badge ${badgeClass}">${item.demanda}</span></td>
+                    <td><span class="badge ${badgeClass}">${item.fertilidad}</span></td>
                 `;
                 tbody.appendChild(row);
             });
 
             totalRegistros.textContent = data.length;
-            picosCount.textContent = picosUnicos.size;
+            picosAltosCount.textContent = altos;
+            picosBajosCount.textContent = bajos;
         }
 
         function filtrarDatos() {
+            const regionVal = regionSelect.value.toLowerCase();
             const provinciaVal = provinciaSelect.value.toLowerCase();
             const mesVal = mesSelect.value.toLowerCase();
             const searchVal = searchInput.value.toLowerCase();
 
             const resultadosFiltrados = dbData.filter(item => {
-                const matchProvincia = provinciaVal === '' || item.provincia.toLowerCase().includes(provinciaVal);
-                const matchMes = mesVal === '' || item.mes.toLowerCase().includes(mesVal);
+                const matchRegion = regionVal === '' || item.region.toLowerCase() === regionVal;
+                const matchProvincia = provinciaVal === '' || item.provincia.toLowerCase() === provinciaVal;
+                const matchMes = mesVal === '' || item.mes.toLowerCase() === mesVal;
                 const matchSearch = searchVal === '' || item.producto.toLowerCase().includes(searchVal);
-                return matchProvincia && matchMes && matchSearch;
+                return matchRegion && matchProvincia && matchMes && matchSearch;
             });
 
             renderTable(resultadosFiltrados);
         }
 
-        // Eventos de escucha para los filtros
+        regionSelect.addEventListener('change', () => {
+            actualizarProvincias();
+            filtrarDatos();
+        });
         provinciaSelect.addEventListener('change', filtrarDatos);
         mesSelect.addEventListener('change', filtrarDatos);
         searchInput.addEventListener('input', filtrarDatos);
 
-        // Inicializar la tabla al cargar
+        // Inicialización
+        actualizarProvincias();
         renderTable(dbData);
     </script>
 </body>
