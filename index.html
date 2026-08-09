@@ -15,6 +15,7 @@
             --warning: #d97706;
             --danger: #dc2626;
             --accent: #0284c7;
+            --whatsapp: #25d366;
         }
 
         * {
@@ -64,6 +65,7 @@
         .header-actions {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .btn-action {
@@ -84,6 +86,45 @@
 
         .btn-secondary {
             background-color: var(--accent);
+        }
+
+        .btn-whatsapp {
+            background-color: var(--whatsapp);
+        }
+
+        .btn-whatsapp:hover {
+            background-color: #1ebd5b;
+        }
+
+        /* Barra para compartir enlace */
+        .share-bar {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .share-bar span {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .share-link-input {
+            flex-grow: 1;
+            max-width: 400px;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: #fff;
+            font-size: 0.85rem;
+            color: var(--text-muted);
         }
 
         .notification-banner {
@@ -291,7 +332,7 @@
         }
 
         @media print {
-            .btn-action, .grid-filters, .notification-banner, .analytics-container {
+            .btn-action, .grid-filters, .notification-banner, .analytics-container, .share-bar {
                 display: none !important;
             }
             body {
@@ -321,10 +362,20 @@
                 <p>Plataforma de Inteligencia Agroalimentaria y Oportunidades del Ecuador</p>
             </div>
             <div class="header-actions">
-                <button class="btn-action btn-secondary" onclick="registrarPuntoVenta()">+ Registrar Mercado / Socio</button>
-                <button class="btn-action" onclick="window.print()">Generar PDF Comercial</button>
+                <button class="btn-action btn-secondary" onclick="registrarPuntoVenta()">+ Registrar Mercado</button>
+                <button class="btn-action" onclick="window.print()">Generar PDF</button>
             </div>
         </header>
+
+        <!-- Barra Interactiva para Compartir la Aplicación -->
+        <div class="share-bar">
+            <span>🔗 Compartir aplicación:</span>
+            <input type="text" id="shareUrlInput" class="share-link-input" readonly>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn-action" style="padding: 8px 12px; font-size: 0.8rem;" onclick="copiarEnlace()">Copiar Enlace</button>
+                <button class="btn-action btn-whatsapp" style="padding: 8px 12px; font-size: 0.8rem;" onclick="compartirWhatsApp()">Enviar por WhatsApp</button>
+            </div>
+        </div>
 
         <!-- Notificación Automática Activa -->
         <div class="notification-banner" id="notificationBanner">
@@ -442,6 +493,23 @@
             { id: 12, region: "Amazonía", provincia: "Napo", canton: "Tena", producto: "Yuca Brava", mes: "Marzo", precioTemporada: "$0.35 /kg", precioFuera: "$0.75 /kg", mercado: "Feria Amazónica Tena", eficiencia: "Alta" },
             { id: 13, region: "Insular", provincia: "Galápagos", canton: "Puerto Ayora", producto: "Café Insular", mes: "Junio", precioTemporada: "$4.00 /kg", precioFuera: "$6.50 /kg", mercado: "Cooperativa de Agricultores Santa Cruz", eficiencia: "Baja" }
         ];
+
+        // Inicializar campo de enlace automáticamente
+        document.getElementById('shareUrlInput').value = window.location.href;
+
+        function copiarEnlace() {
+            const inputShare = document.getElementById('shareUrlInput');
+            inputShare.select();
+            inputShare.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(inputShare.value);
+            alert("¡Enlace copiado al portapapeles! Ya puedes pegarlo y compartirlo.");
+        }
+
+        function compartirWhatsApp() {
+            const urlActual = window.location.href;
+            const textoMensaje = encodeURIComponent("¡Hola! Revisa esta plataforma de inteligencia agroalimentaria 'Agro Oportunidad' para consultar cosechas, precios y mercados en Ecuador: " + urlActual);
+            window.open("https://api.whatsapp.com/send?text=" + textoMensaje, "_blank");
+        }
 
         const tbody = document.getElementById('tbodyData');
         const regionSelect = document.getElementById('regionSelect');
