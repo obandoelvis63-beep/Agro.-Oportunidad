@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Master Barista Workshop - Oportunidades Agroalimentarias</title>
+    <title>Agro Oportunidad - Plataforma de Inteligencia Agroalimentaria</title>
     <style>
         :root {
             --primary: #1e3a8a;
@@ -86,7 +86,6 @@
             background-color: var(--accent);
         }
 
-        /* Alertas Automáticas Banner */
         .notification-banner {
             background: #e0f2fe;
             border-left: 4px solid var(--accent);
@@ -291,7 +290,6 @@
             color: var(--text-muted);
         }
 
-        /* Estilos exclusivos para Impresión PDF Comercial */
         @media print {
             .btn-action, .grid-filters, .notification-banner, .analytics-container {
                 display: none !important;
@@ -306,7 +304,7 @@
                 max-width: 100%;
             }
             header::after {
-                content: "Reporte generado por Master Barista Workshop";
+                content: "Reporte generado por Agro Oportunidad";
                 display: block;
                 font-size: 0.8rem;
                 color: #666;
@@ -319,7 +317,7 @@
     <div class="app-card">
         <header>
             <div class="brand-title">
-                <h1>Master Barista Workshop</h1>
+                <h1>Agro Oportunidad</h1>
                 <p>Plataforma de Inteligencia Agroalimentaria y Oportunidades del Ecuador</p>
             </div>
             <div class="header-actions">
@@ -429,7 +427,6 @@
     </div>
 
     <script>
-        // Base de datos integrada con precios estimados ($), mercados sugeridos y eficiencia
         let dbData = [
             { id: 1, region: "Costa", provincia: "Manabí", canton: "Portoviejo", producto: "Yuca (Tubérculo)", mes: "Julio", precioTemporada: "$0.40 /kg", precioFuera: "$0.85 /kg", mercado: "Mercado Central / Feria Libre Portoviejo", eficiencia: "Alta" },
             { id: 2, region: "Costa", provincia: "Manabí", canton: "Chone", producto: "Plátano Verde", mes: "Octubre", precioTemporada: "$0.15 c/u", precioFuera: "$0.35 c/u", mercado: "Mercado Municipal de Chone", eficiencia: "Alta" },
@@ -543,7 +540,6 @@
             renderAnalytics(data);
         }
 
-        // Función interactiva para que mercados locales se registren como puntos de venta (Alianzas)
         function registrarPuntoVenta() {
             const nombreMercado = prompt("Ingrese el nombre de su Mercado, Feria o Negocio:");
             const cantonUbicacion = prompt("¿En qué cantón o provincia se encuentra?");
@@ -563,7 +559,7 @@
                     eficiencia: "Alta"
                 });
                 filtrarDatos();
-                alert("¡Excelente! Su punto de venta ha sido registrado con éxito y ya aparece en la red de Master Barista Workshop.");
+                alert("¡Excelente! Su punto de venta ha sido registrado con éxito y ya aparece en la red de Agro Oportunidad.");
             }
         }
 
@@ -592,7 +588,6 @@
         mesSelect.addEventListener('change', filtrarDatos);
         searchInput.addEventListener('input', filtrarDatos);
 
-        // Inicialización
         actualizarProvincias();
         renderTable(dbData);
     </script>
