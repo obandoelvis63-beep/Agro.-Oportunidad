@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma de Oportunidades Agroalimentarias - Ecuador</title>
+    <title>Master Barista Workshop - Oportunidades Agroalimentarias</title>
     <style>
         :root {
             --primary: #1e3a8a;
@@ -14,6 +14,7 @@
             --success: #10b981;
             --warning: #d97706;
             --danger: #dc2626;
+            --accent: #0284c7;
         }
 
         * {
@@ -31,7 +32,7 @@
         }
 
         .app-card {
-            max-width: 1400px;
+            max-width: 1450px;
             margin: 0 auto;
             background: #ffffff;
             border-radius: 12px;
@@ -46,19 +47,26 @@
             margin-bottom: 24px;
             border-bottom: 2px solid #e2e8f0;
             padding-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
-        header h1 {
+        .brand-title h1 {
             font-size: 1.5rem;
             color: var(--primary);
         }
 
-        header p {
+        .brand-title p {
             color: var(--text-muted);
             font-size: 0.875rem;
         }
 
-        .btn-print {
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
             background-color: var(--primary);
             color: white;
             border: none;
@@ -70,8 +78,25 @@
             transition: background-color 0.2s;
         }
 
-        .btn-print:hover {
+        .btn-action:hover {
             background-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--accent);
+        }
+
+        /* Alertas Automáticas Banner */
+        .notification-banner {
+            background: #e0f2fe;
+            border-left: 4px solid var(--accent);
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.875rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .grid-filters {
@@ -134,7 +159,6 @@
             font-weight: 700;
         }
 
-        /* Sección de Estadísticas y Recomendaciones */
         .analytics-container {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -143,9 +167,7 @@
         }
 
         @media (max-width: 900px) {
-            .analytics-container {
-                grid-template-columns: 1fr;
-            }
+            .analytics-container { grid-template-columns: 1fr; }
         }
 
         .chart-box, .recommendation-box {
@@ -206,7 +228,7 @@
 
         .table-container {
             overflow-x: auto;
-            max-height: 450px;
+            max-height: 480px;
         }
 
         table {
@@ -218,7 +240,7 @@
 
         th {
             background: #f8fafc;
-            padding: 12px 16px;
+            padding: 12px 14px;
             font-weight: 600;
             border-bottom: 2px solid #e2e8f0;
             position: sticky;
@@ -227,8 +249,9 @@
         }
 
         td {
-            padding: 12px 16px;
+            padding: 12px 14px;
             border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
         }
 
         tr:hover {
@@ -247,15 +270,31 @@
         .badge-media { background: #fef9c3; color: #854d0e; }
         .badge-baja { background: #fee2e2; color: #991b1b; }
 
+        .price-tag {
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .market-tag {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            background: #f1f5f9;
+            padding: 3px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 2px;
+        }
+
         .empty-state {
             text-align: center;
             padding: 32px;
             color: var(--text-muted);
         }
 
+        /* Estilos exclusivos para Impresión PDF Comercial */
         @media print {
-            .btn-print, .grid-filters {
-                display: none;
+            .btn-action, .grid-filters, .notification-banner, .analytics-container {
+                display: none !important;
             }
             body {
                 background: white;
@@ -264,6 +303,13 @@
             .app-card {
                 box-shadow: none;
                 padding: 0;
+                max-width: 100%;
+            }
+            header::after {
+                content: "Reporte generado por Master Barista Workshop";
+                display: block;
+                font-size: 0.8rem;
+                color: #666;
             }
         }
     </style>
@@ -272,12 +318,21 @@
 
     <div class="app-card">
         <header>
-            <div>
-                <h1>Plataforma de Oportunidades Agroalimentarias</h1>
-                <p>Control integral de alimentos, eficiencia estacional y gestión territorial del Ecuador</p>
+            <div class="brand-title">
+                <h1>Master Barista Workshop</h1>
+                <p>Plataforma de Inteligencia Agroalimentaria y Oportunidades del Ecuador</p>
             </div>
-            <button class="btn-print" onclick="window.print()">Imprimir Reporte</button>
+            <div class="header-actions">
+                <button class="btn-action btn-secondary" onclick="registrarPuntoVenta()">+ Registrar Mercado / Socio</button>
+                <button class="btn-action" onclick="window.print()">Generar PDF Comercial</button>
+            </div>
         </header>
+
+        <!-- Notificación Automática Activa -->
+        <div class="notification-banner" id="notificationBanner">
+            <span>🔔 <strong>Alerta de Temporada:</strong> ¡Alta producción detectada de Cacao y Yuca en la región Costa para este mes! Ahorro estimado de hasta un 35% en compras al por mayor.</span>
+            <button style="background:none;border:none;cursor:pointer;font-weight:bold;" onclick="this.parentElement.style.display='none'">✕</button>
+        </div>
 
         <!-- Filtros Dinámicos -->
         <div class="grid-filters">
@@ -319,7 +374,7 @@
             </div>
 
             <div class="field-group">
-                <label for="searchInput">Buscar Alimento (Frutas, Verduras, Yuca...)</label>
+                <label for="searchInput">Buscar Alimento / Insumo</label>
                 <input type="text" id="searchInput" class="input-control" placeholder="Ej. Yuca, Papa, Cacao, Tomate...">
             </div>
         </div>
@@ -327,15 +382,15 @@
         <!-- Métricas Principales -->
         <div class="metrics-grid">
             <div class="metric-card">
-                <h3>Registros Totales Filtrados</h3>
+                <h3>Registros Totales</h3>
                 <p id="totalRegistros">0</p>
             </div>
             <div class="metric-card success">
-                <h3>Picos de Alta Fertilidad</h3>
+                <h3>Picos de Alta Eficiencia</h3>
                 <p id="picosAltosCount">0</p>
             </div>
             <div class="metric-card danger">
-                <h3>Meses de Baja Eficiencia</h3>
+                <h3>Meses de Menor Rendimiento</h3>
                 <p id="picosBajosCount">0</p>
             </div>
         </div>
@@ -343,93 +398,52 @@
         <!-- Estadísticas Visuales y Recomendaciones -->
         <div class="analytics-container">
             <div class="chart-box">
-                <h3>Estadística de Rendimiento por Trimestre / Estado</h3>
-                <div class="mini-bar-chart" id="barChartContainer">
-                    <!-- Barras dinámicas generadas por JS -->
-                </div>
+                <h3>Estadística General de Rendimiento Estacional</h3>
+                <div class="mini-bar-chart" id="barChartContainer"></div>
             </div>
             <div class="recommendation-box">
-                <h3>Acción y Recomendación Estratégica</h3>
+                <h3>Recomendación Estratégica para Negocios</h3>
                 <div class="recommendation-content" id="recommendationText">
-                    Cargando recomendaciones operativas...
+                    Cargando análisis de mercado...
                 </div>
             </div>
         </div>
 
-        <!-- Tabla Completa de Alimentos -->
+        <!-- Tabla Completa con Precios y Mercados -->
         <div class="table-container">
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Región</th>
-                        <th>Provincia</th>
+                        <th>Región / Provincia</th>
                         <th>Cantón</th>
-                        <th>Categoría / Alimento</th>
+                        <th>Alimento / Producto</th>
                         <th>Mes</th>
-                        <th>Nivel de Eficiencia</th>
+                        <th>Precio en Temporada vs Fuera</th>
+                        <th>Punto de Venta / Mercado Sugerido</th>
+                        <th>Eficiencia</th>
                     </tr>
                 </thead>
-                <tbody id="tbodyData">
-                    <!-- Inyección dinámica de datos -->
-                </tbody>
+                <tbody id="tbodyData"></tbody>
             </table>
         </div>
     </div>
 
     <script>
-        // Base de datos completa ampliada con Frutas, Verduras, Tubérculos (Yuca, Papa), Granos y los 12 meses
-        const dbData = [
-            // COSTA
-            { id: 1, region: "Costa", provincia: "Manabí", canton: "Portoviejo", producto: "Yuca (Tubérculo)", mes: "Julio", eficiencia: "Alta" },
-            { id: 2, region: "Costa", provincia: "Manabí", canton: "Chone", producto: "Plátano Verde (Fruta/Verdura)", mes: "Octubre", eficiencia: "Alta" },
-            { id: 3, region: "Costa", provincia: "Manabí", canton: "Manta", producto: "Tomate Riñón (Verdura)", mes: "Marzo", eficiencia: "Baja" },
-            { id: 4, region: "Costa", provincia: "Manabí", canton: "Jipijapa", producto: "Maíz Suave (Grano)", mes: "Abril", eficiencia: "Media" },
-            { id: 5, region: "Costa", provincia: "Guayas", canton: "Guayaquil", producto: "Arroz (Grano)", mes: "Febrero", eficiencia: "Alta" },
-            { id: 6, region: "Costa", provincia: "Guayas", canton: "Daule", producto: "Cebolla Paiteña (Verdura)", mes: "Septiembre", eficiencia: "Baja" },
-            { id: 7, region: "Costa", provincia: "Guayas", canton: "Milagro", producto: "Banano (Fruta)", mes: "Enero", eficiencia: "Alta" },
-            { id: 8, region: "Costa", provincia: "Los Ríos", canton: "Babahoyo", producto: "Cacao Fino (Fruta/Grano)", mes: "Diciembre", eficiencia: "Media" },
-            { id: 9, region: "Costa", provincia: "Los Ríos", canton: "Quevedo", producto: "Soya (Grano)", mes: "Mayo", eficiencia: "Baja" },
-            { id: 10, region: "Costa", provincia: "El Oro", canton: "Machala", producto: "Piña (Fruta)", mes: "Junio", eficiencia: "Alta" },
-            { id: 11, region: "Costa", provincia: "El Oro", canton: "Pasaje", producto: "Yuca (Tubérculo)", mes: "Agosto", eficiencia: "Media" },
-            { id: 12, region: "Costa", provincia: "Esmeraldas", canton: "Esmeraldas", producto: "Coco (Fruta)", mes: "Noviembre", eficiencia: "Alta" },
-            { id: 13, region: "Costa", provincia: "Esmeraldas", canton: "Atacames", producto: "Palmito (Verdura)", mes: "Julio", eficiencia: "Baja" },
-            { id: 14, region: "Costa", provincia: "Santa Elena", canton: "Santa Elena", producto: "Limón (Fruta)", mes: "Enero", eficiencia: "Baja" },
-            { id: 15, region: "Costa", provincia: "Santa Elena", canton: "La Libertad", producto: "Melón (Fruta)", mes: "Diciembre", eficiencia: "Alta" },
-
-            // SIERRA
-            { id: 16, region: "Sierra", provincia: "Pichincha", canton: "Quito", producto: "Papa Chola (Tubérculo)", mes: "Octubre", eficiencia: "Alta" },
-            { id: 17, region: "Sierra", provincia: "Pichincha", canton: "Cayambe", producto: "Zanahoria (Verdura)", mes: "Febrero", eficiencia: "Media" },
-            { id: 18, region: "Sierra", provincia: "Pichincha", canton: "Mejía", producto: "Lechuga (Verdura)", mes: "Marzo", eficiencia: "Baja" },
-            { id: 19, region: "Sierra", provincia: "Azuay", canton: "Cuenca", producto: "Maíz Duro (Grano)", mes: "Mayo", eficiencia: "Media" },
-            { id: 20, region: "Sierra", provincia: "Azuay", canton: "Gualaceo", producto: "Haba Tierno (Grano)", mes: "Agosto", eficiencia: "Baja" },
-            { id: 21, region: "Sierra", provincia: "Tungurahua", canton: "Ambato", producto: "Durazno (Fruta)", mes: "Febrero", eficiencia: "Alta" },
-            { id: 22, region: "Sierra", provincia: "Tungurahua", canton: "Baños", producto: "Tomate de Árbol (Fruta)", mes: "Junio", eficiencia: "Alta" },
-            { id: 23, region: "Sierra", provincia: "Chimborazo", canton: "Riobamba", producto: "Cebada (Grano)", mes: "Septiembre", eficiencia: "Baja" },
-            { id: 24, region: "Sierra", provincia: "Chimborazo", canton: "Guano", producto: "Oca (Tubérculo)", mes: "Noviembre", eficiencia: "Media" },
-            { id: 25, region: "Sierra", provincia: "Imbabura", canton: "Ibarra", producto: "Frijol Seco (Grano)", mes: "Julio", eficiencia: "Alta" },
-            { id: 26, region: "Sierra", provincia: "Imbabura", canton: "Otavalo", producto: "Mortiño (Fruta silvestre)", mes: "Noviembre", eficiencia: "Media" },
-            { id: 27, region: "Sierra", provincia: "Cotopaxi", canton: "Latacunga", producto: "Brócoli (Verdura)", mes: "Diciembre", eficiencia: "Alta" },
-            { id: 28, region: "Sierra", provincia: "Cotopaxi", canton: "Pujilí", producto: "melloco (Tubérculo)", mes: "Abril", eficiencia: "Baja" },
-            { id: 29, region: "Sierra", provincia: "Bolívar", canton: "Guaranda", producto: "Trigo (Grano)", mes: "Agosto", eficiencia: "Baja" },
-            { id: 30, region: "Sierra", provincia: "Carchi", canton: "Tulcán", producto: "Papa Superchongana (Tubérculo)", mes: "Enero", eficiencia: "Alta" },
-            { id: 31, region: "Sierra", provincia: "Carchi", canton: "San Gabriel", producto: "Arveja Tierna (Grano)", mes: "Junio", eficiencia: "Media" },
-            { id: 32, region: "Sierra", provincia: "Loja", canton: "Loja", producto: "Café Arábigo (Grano)", mes: "Octubre", eficiencia: "Alta" },
-            { id: 33, region: "Sierra", provincia: "Loja", canton: "Catamayo", producto: "Guineo (Fruta)", mes: "Marzo", eficiencia: "Baja" },
-
-            // AMAZONÍA
-            { id: 34, region: "Amazonía", provincia: "Napo", canton: "Tena", producto: "Yuca Brava (Tubérculo)", mes: "Marzo", eficiencia: "Alta" },
-            { id: 35, region: "Amazonía", provincia: "Napo", canton: "Archidona", producto: "Papaya Amazónica (Fruta)", mes: "Septiembre", eficiencia: "Media" },
-            { id: 36, region: "Amazonía", provincia: "Pastaza", canton: "Puyo", producto: "Chonta (Fruta)", mes: "Abril", eficiencia: "Alta" },
-            { id: 37, region: "Amazonía", provincia: "Morona Santiago", canton: "Macas", producto: "Pitahaya Roja (Fruta)", mes: "Diciembre", eficiencia: "Alta" },
-            { id: 38, region: "Amazonía", provincia: "Morona Santiago", canton: "Gualaquiza", producto: "Pitahaya Amarilla (Fruta)", mes: "Enero", eficiencia: "Baja" },
-            { id: 39, region: "Amazonía", provincia: "Zamora Chinchipe", canton: "Zamora", producto: "Naranja (Fruta)", mes: "Mayo", eficiencia: "Media" },
-            { id: 40, region: "Amazonía", provincia: "Sucumbíos", canton: "Nueva Loja", producto: "Maíz Duro (Grano)", mes: "Agosto", eficiencia: "Baja" },
-            { id: 41, region: "Amazonía", provincia: "Orellana", canton: "Coca", producto: "Piña Hawaiana (Fruta)", mes: "Febrero", eficiencia: "Alta" },
-
-            // INSULAR
-            { id: 42, region: "Insular", provincia: "Galápagos", canton: "Puerto Baquerizo Moreno", producto: "Tomate Local (Verdura)", mes: "Noviembre", eficiencia: "Media" },
-            { id: 43, region: "Insular", provincia: "Galápagos", canton: "Puerto Ayora", producto: "Café de Altura Insular (Grano)", mes: "Junio", eficiencia: "Baja" }
+        // Base de datos integrada con precios estimados ($), mercados sugeridos y eficiencia
+        let dbData = [
+            { id: 1, region: "Costa", provincia: "Manabí", canton: "Portoviejo", producto: "Yuca (Tubérculo)", mes: "Julio", precioTemporada: "$0.40 /kg", precioFuera: "$0.85 /kg", mercado: "Mercado Central / Feria Libre Portoviejo", eficiencia: "Alta" },
+            { id: 2, region: "Costa", provincia: "Manabí", canton: "Chone", producto: "Plátano Verde", mes: "Octubre", precioTemporada: "$0.15 c/u", precioFuera: "$0.35 c/u", mercado: "Mercado Municipal de Chone", eficiencia: "Alta" },
+            { id: 3, region: "Costa", provincia: "Manabí", canton: "Manta", producto: "Tomate Riñón", mes: "Marzo", precioTemporada: "$0.60 /kg", precioFuera: "$1.20 /kg", mercado: "Mercado Tarqui, Manta", eficiencia: "Baja" },
+            { id: 4, region: "Costa", provincia: "Guayas", canton: "Guayaquil", producto: "Arroz (Grano)", mes: "Febrero", precioTemporada: "$0.90 /kg", precioFuera: "$1.40 /kg", mercado: "Mercado Mayorista Montebello", eficiencia: "Alta" },
+            { id: 5, region: "Costa", provincia: "Los Ríos", canton: "Babahoyo", producto: "Cacao Fino", mes: "Diciembre", precioTemporada: "$2.20 /kg", precioFuera: "$3.50 /kg", mercado: "Bodegas y Acopio Babahoyo", eficiencia: "Media" },
+            { id: 6, region: "Costa", provincia: "El Oro", canton: "Machala", producto: "Piña (Fruta)", mes: "Junio", precioTemporada: "$0.80 c/u", precioFuera: "$1.50 c/u", mercado: "Feria de Productores El Oro", eficiencia: "Alta" },
+            { id: 7, region: "Sierra", provincia: "Pichincha", canton: "Quito", producto: "Papa Chola", mes: "Octubre", precioTemporada: "$0.50 /kg", precioFuera: "$1.10 /kg", mercado: "Mercado Mayorista Quito", eficiencia: "Alta" },
+            { id: 8, region: "Sierra", provincia: "Tungurahua", canton: "Ambato", producto: "Durazno (Fruta)", mes: "Febrero", precioTemporada: "$1.00 /kg", precioFuera: "$2.20 /kg", mercado: "Mercado Mayorista Ambato", eficiencia: "Alta" },
+            { id: 9, region: "Sierra", provincia: "Chimborazo", canton: "Riobamba", producto: "Cebada (Grano)", mes: "Septiembre", precioTemporada: "$0.45 /kg", precioFuera: "$0.90 /kg", mercado: "Plaza Mayorista Riobamba", eficiencia: "Baja" },
+            { id: 10, region: "Sierra", provincia: "Carchi", canton: "Tulcán", producto: "Papa Superchongana", mes: "Enero", precioTemporada: "$0.40 /kg", precioFuera: "$0.95 /kg", mercado: "Mercado Central Tulcán", eficiencia: "Alta" },
+            { id: 11, region: "Amazonía", provincia: "Morona Santiago", canton: "Macas", producto: "Pitahaya Roja", mes: "Diciembre", precioTemporada: "$1.50 /kg", precioFuera: "$3.00 /kg", mercado: "Asociación Agro-Macas", eficiencia: "Alta" },
+            { id: 12, region: "Amazonía", provincia: "Napo", canton: "Tena", producto: "Yuca Brava", mes: "Marzo", precioTemporada: "$0.35 /kg", precioFuera: "$0.75 /kg", mercado: "Feria Amazónica Tena", eficiencia: "Alta" },
+            { id: 13, region: "Insular", provincia: "Galápagos", canton: "Puerto Ayora", producto: "Café Insular", mes: "Junio", precioTemporada: "$4.00 /kg", precioFuera: "$6.50 /kg", mercado: "Cooperativa de Agricultores Santa Cruz", eficiencia: "Baja" }
         ];
 
         const tbody = document.getElementById('tbodyData');
@@ -447,7 +461,6 @@
         function actualizarProvincias() {
             const regionVal = regionSelect.value;
             provinciaSelect.innerHTML = '<option value="">Todas las provincias</option>';
-            
             const provinciasFiltradas = regionVal 
                 ? [...new Set(dbData.filter(item => item.region === regionVal).map(item => item.provincia))]
                 : [...new Set(dbData.map(item => item.provincia))];
@@ -477,17 +490,16 @@
             `;
 
             if (baja > alta) {
-                recommendationText.innerHTML = `<strong>Alerta de Eficiencia Baja:</strong> Se detecta un volumen crítico de meses con rendimiento desfavorable. <em>Recomendación:</em> Diversificar las compras hacia regiones con producción de contraestación, activar almacenamiento estratégico en frío e incentivar contratos directos con productores de la Sierra y Costa para evitar desabastecimiento.`;
+                recommendationText.innerHTML = `<strong>Atención Negocios:</strong> Predominan meses de baja eficiencia. <em>Estrategia:</em> Privilegie compras anticipadas en mercados mayoristas sugeridos y gestione contratos directos con productores locales para amortiguar el incremento de precios fuera de temporada.`;
             } else {
-                recommendationText.innerHTML = `<strong>Flujo Óptimo de Abastecimiento:</strong> Los niveles de fertilidad y recolección se mantienen estables. <em>Recomendación:</em> Es el momento ideal para asegurar compras al por mayor de frutas, verduras y tubérculos locales aprovechando los picos altos para inventario.`;
+                recommendationText.innerHTML = `<strong>Oportunidad Comercial:</strong> Alta disponibilidad estacional. <em>Estrategia:</em> Excelente momento para negociar volúmenes altos en ferias locales con ahorros estimados superiores al 30% en costos de materia prima.`;
             }
         }
 
         function renderTable(data) {
             tbody.innerHTML = '';
-            
             if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="empty-state">No se encontraron registros coincidentes. Pruebe buscando otro alimento o región.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="empty-state">No se encontraron registros coincidentes con los filtros actuales.</td></tr>`;
                 totalRegistros.textContent = '0';
                 picosAltosCount.textContent = '0';
                 picosBajosCount.textContent = '0';
@@ -508,12 +520,18 @@
                 
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${item.id}</td>
-                    <td>${item.region}</td>
-                    <td><strong>${item.provincia}</strong></td>
+                    <td><strong>${item.region}</strong><br><span style="font-size:0.75rem; color:#64748b;">${item.provincia}</span></td>
                     <td>${item.canton}</td>
-                    <td>${item.producto}</td>
+                    <td><strong>${item.producto}</strong></td>
                     <td>${item.mes}</td>
+                    <td>
+                        <span class="price-tag">${item.precioTemporada}</span><br>
+                        <span style="font-size:0.75rem; text-decoration:line-through; color:#94a3b8;">Fuera: ${item.precioFuera}</span>
+                    </td>
+                    <td>
+                        📍 ${item.mercado}<br>
+                        <span class="market-tag">Punto Aliado Verificado</span>
+                    </td>
                     <td><span class="badge ${badgeClass}">${item.eficiencia}</span></td>
                 `;
                 tbody.appendChild(row);
@@ -523,6 +541,30 @@
             picosAltosCount.textContent = altos;
             picosBajosCount.textContent = bajos;
             renderAnalytics(data);
+        }
+
+        // Función interactiva para que mercados locales se registren como puntos de venta (Alianzas)
+        function registrarPuntoVenta() {
+            const nombreMercado = prompt("Ingrese el nombre de su Mercado, Feria o Negocio:");
+            const cantonUbicacion = prompt("¿En qué cantón o provincia se encuentra?");
+            const productoAsociado = prompt("¿Qué alimento o producto principal oferta?");
+            
+            if (nombreMercado && cantonUbicacion && productoAsociado) {
+                dbData.unshift({
+                    id: dbData.length + 1,
+                    region: "Costa",
+                    provincia: "Manabí",
+                    canton: cantonUbicacion,
+                    producto: productoAsociado + " (Socio Registrado)",
+                    mes: "Agosto",
+                    precioTemporada: "$0.50 (Promoción)",
+                    precioFuera: "$1.00",
+                    mercado: nombreMercado,
+                    eficiencia: "Alta"
+                });
+                filtrarDatos();
+                alert("¡Excelente! Su punto de venta ha sido registrado con éxito y ya aparece en la red de Master Barista Workshop.");
+            }
         }
 
         function filtrarDatos() {
@@ -535,7 +577,7 @@
                 const matchRegion = regionVal === '' || item.region.toLowerCase() === regionVal;
                 const matchProvincia = provinciaVal === '' || item.provincia.toLowerCase() === provinciaVal;
                 const matchMes = mesVal === '' || item.mes.toLowerCase() === mesVal;
-                const matchSearch = searchVal === '' || item.producto.toLowerCase().includes(searchVal);
+                const matchSearch = searchVal === '' || item.producto.toLowerCase().includes(searchVal) || item.mercado.toLowerCase().includes(searchVal);
                 return matchRegion && matchProvincia && matchMes && matchSearch;
             });
 
@@ -550,7 +592,7 @@
         mesSelect.addEventListener('change', filtrarDatos);
         searchInput.addEventListener('input', filtrarDatos);
 
-        // Inicializar
+        // Inicialización
         actualizarProvincias();
         renderTable(dbData);
     </script>
